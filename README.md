@@ -15,6 +15,7 @@ Setup:
 11. open settings.json and enter your capmonster key (get key at capmonster.cloud and you need add funds) and invite code, if you want you can change the other settings but standard will work fine
 12. open start.bat
 13. pick what you wanna do
+dont use proxies if they are not fast roatating ones, keep threads to 1 if your not using proxies
 
 #-----------------
 
