@@ -61,6 +61,7 @@ def settings():
             global random_letters
             global threads
             global use_proxies
+            global random_user
             json_data = open("settings.json")
             json_data = json.load(json_data)
             api_key = json_data["capmonster_key"]
@@ -71,11 +72,12 @@ def settings():
             username = json_data["tokens_username"]
             password = json_data["tokens_password"]
             print_email = json_data["print_email_y_or_n"]
-            print_proxy = "n"
-            threads = "1"
+            print_proxy = json_data["print_proxy_y_or_n"]
+            threads = json_data["threads"]
             invite = json_data["invite_code"]
             random_letters = json_data["random_letters_after_token_username_y_or_n"]
-            use_proxies = "n"
+            use_proxies = json_data["use_proxies_y_or_n"]
+            random_user = json_data["random_username_from_names.txt_y_or_n"]
             try:
                 bal = capmonster_python.HCaptchaTask(api_key)
                 el = bal.get_balance()
@@ -97,6 +99,10 @@ def settings():
                 error = True
             if use_proxies != "y" and use_proxies != "n":       
                 error = True
+            if "-" in str(threads):
+                error = True
+            if random_user != "y" and random_user != "n":
+                error = True
             try:
                 threads = int(threads)
             except:
@@ -106,7 +112,7 @@ def settings():
                 input("")
             if error == False:
                 break
-        except Exception:
+        except Exception as e:
             print(colorama.Fore.RED + 'Missing "settings.json" File, It Stores All Settings')
             input("")
             exit()
@@ -133,7 +139,10 @@ def gen():
             session = requests.session()
             
             if use_proxies == "y":
-                print(colorama.Fore.RED + "[-] Proxies Currently Not Working")
+                prox = open("roatating_proxy.txt", "r")
+                proxy = str(prox.readline())
+                print(proxy)
+                print(colorama.Fore.GREEN + "[-] Loaded Proxie")
             
             while True:
                 try:
@@ -191,13 +200,30 @@ def gen():
                     'Cookie': 'OptanonConsent=version=6.17.0; locale=th'
                 }
             choices = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-            if random_letters == "y":
-                rande = random.choices(choices, k=5)
-                rande = "".join(rande)
-                rande = str(rande)
-                rande = " | " + rande
-            if random_letters == "n":
-                rande = ""
+            if random_user == "n":
+                if random_letters == "y":
+                    rande = random.choices(choices, k=5)
+                    rande = "".join(rande)
+                    rande = str(rande)
+                    rande = " | " + rande
+                if random_letters == "n":
+                    rande = ""
+
+                usa = username + rande
+
+            if random_user == "y":
+                fe = open("names.txt", "r")
+                er = fe.readlines()
+                ee = []
+                for t in er:
+                    if "\n" in t:
+                        ee.append(t[:-1])
+                    else:
+                        ee.append(t)
+                usa = str(random.choice(ee))
+                fe.close()
+
+                print("usa ", usa)
             email = random.choices(choices, k=16)
             email = str("".join(email))
             if print_email == "y":
@@ -207,7 +233,7 @@ def gen():
             payload = {
                 "fingerprint": Fingerprint,
                 "email": f"{email}@gmail.com",
-                "username": f"{username}{rande}",
+                "username": f"{usa}",
                 "password": password,
                 "invite": invite,
                 "consent": True,
@@ -217,6 +243,11 @@ def gen():
                 "promotional_email_opt_in": True
             }
             while True:
+                if use_proxies == "y":
+                    session.proxies = {
+                        "http": "http://"+proxy,
+                        "https": "https://"+proxy
+                    }
                 reg = session.post('https://discord.com/api/v9/auth/register', json=payload)
                 res = str(reg)
                 jle = reg.json()
@@ -225,7 +256,7 @@ def gen():
                     file = open("tokens.txt", "a")
                     file.write(token+"\n")
                     file.close()
-                    print(colorama.Fore.GREEN + f"[+] Generated Token/Account ({username}{rande}), Saved In tokens.txt And If Invite In settings.json Is Valid Token Shall Auto Join")
+                    print(colorama.Fore.GREEN + f"[+] Generated Token/Account ({usa}), Saved In tokens.txt And If Invite In settings.json Is Valid Token Shall Auto Join")
                     break
                 if "429" in res:
                     time2 = float(jle["retry_after"])
@@ -236,14 +267,16 @@ def gen():
                     if print_fails == "y":
                         print(colorama.Fore.RED + "[-] Failed To Create Account")
                     break
-                if "400" not in res and "429" not in res and "200" not in res:
+                if "400" not in res and "429" not in res and "201" not in res:
                     if print_fails == "y":
-                        print(colorama.Fore.RED + "[-] Unkown Error")     
+                        print(colorama.Fore.RED + "[-] Unkown Error")
+                    break   
             if str(threads) == "1":
                 print(colorama.Fore.LIGHTGREEN_EX + "------------------------")
-    except:
+    except Exception as e:
+        print(str(e))
         if print_fails == "y":
-            print(colorama.Fore.GREEN + "[-] Unkown Error")
+            print(colorama.Fore.RED + "[-] Unkown Error")
 
 def clear():
     os.system("cls")
