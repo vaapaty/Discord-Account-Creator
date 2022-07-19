@@ -139,7 +139,7 @@ def gen():
             session = requests.session()
             
             if use_proxies == "y":
-                prox = open("roatating_proxy.txt", "r")
+                prox = open("rotating_proxy.txt", "r")
                 proxy = str(prox.readline())
                 print(proxy)
                 print(colorama.Fore.GREEN + "[-] Loaded Proxie")
