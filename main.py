@@ -245,8 +245,8 @@ def gen():
             while True:
                 if use_proxies == "y":
                     session.proxies = {
-                        "http": "http://"+proxy,
-                        "https": "https://"+proxy
+                        "http": proxy,
+                        "https": proxy
                     }
                 reg = session.post('https://discord.com/api/v9/auth/register', json=payload)
                 res = str(reg)
