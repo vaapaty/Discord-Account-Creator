@@ -142,9 +142,9 @@ def gen():
                 prox = open("rotating_proxy.txt", "r")
                 proxy = str(prox.readline())
                 if print_proxy == "n":
-                    print(colorama.Fore.GREEN + "[-] Loaded Proxy")
+                    print(colorama.Fore.GREEN + "[+] Loaded Proxy")
                 if print_proxy == "y":
-                    print(colorama.Fore.GREEN + "[-] Loaded Proxy, "+proxy)
+                    print(colorama.Fore.GREEN + "[+] Loaded Proxy, "+proxy)
             
             while True:
                 try:
