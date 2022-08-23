@@ -131,7 +131,6 @@ settings()
 cap = capmonster_python.HCaptchaTask(api_key)
 
 
-
 def gen():
     try:
         while True:
@@ -139,12 +138,13 @@ def gen():
             session = requests.session()
             
             if use_proxies == "y":
+                time.sleep(0.5)
                 prox = open("rotating_proxy.txt", "r")
                 proxy = str(prox.readline())
                 if print_proxy == "n":
                     print(colorama.Fore.GREEN + "[+] Loaded Proxy")
                 if print_proxy == "y":
-                    print(colorama.Fore.GREEN + "[+] Loaded Proxy, "+proxy)
+                    print(colorama.Fore.GREEN + f"[+] Loaded Proxy, {proxy}")
             
             while True:
                 try:
@@ -171,6 +171,8 @@ def gen():
                 except:
                     if print_fails == "y":
                         print(colorama.Fore.RED + "[-] Failed To Get Captcha Key, Retrying")
+
+
 
 
 
