@@ -226,8 +226,6 @@ def gen():
                         ee.append(t)
                 usa = str(random.choice(ee))
                 fe.close()
-
-                print("usa ", usa)
             email = random.choices(choices, k=16)
             email = str("".join(email))
             if print_email == "y":
