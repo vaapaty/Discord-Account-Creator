@@ -1,28 +1,33 @@
-moder = False
+import time, sys, re
+
+def print015(text):
+    for c in text:
+        sys.stdout.write(c)
+        sys.stdout.flush()
+        time.sleep(0.015)
+    sys.stdout.write("\n")
+
+def print01(text):
+    for c in text:
+        sys.stdout.write(c)
+        sys.stdout.flush()
+        time.sleep(0.015)
+
 
 try:
-    import requests
-    import colorama
-    import capmonster_python
+    import colorama, requests, capmonster_python
 except:
-    moder = True
-
-
-if moder == True:
-    print("Missing Modules Press Enter To Download Them (May Not Always Work): ")
+    sys.stdout.write("> ")
+    print015("Missing Required Modules, Press Enter To Download (May Not Always Work)")
     input("")
     try:
-        import os
-        os.system("pip install requests")
-        os.system("pip install colorama")
-        os.system("pip install capmonster-python")
-        print("Problem May Be Fixed Now, Restart The Program")
-        input("")
-        exit()
+        os.system("pip install colorama requests capmonster-python")
     except:
-        print("Failed To Install Modules")
-        input("")
-        exit()
+        pass
+    sys.stdout.write("> ")
+    print015("Problem Maybe Fixed Now, Restart The Program")
+    input("")
+    exit()
     
     
 
@@ -42,202 +47,134 @@ try:
 except:
     pass
 
+def we():
+    global elr
+    if elr == False:
+        elr = True
+        os.system("cls")
 
 colorama.init(autoreset=True)
 def settings():
     while True:
+        sys.stdout.write(colorama.Fore.CYAN + "> ")
+        print015("Loading Settings...")
+        time.sleep(0.5)
         error = False
+        global elr
+        elr = False
         try:
-            global api_key
-            global print_fails
-            global print_captcha
-            global print_taskid
-            global print_fingerprint
-            global username
-            global password
-            global print_email
-            global print_proxy
-            global invite
-            global random_letters
-            global threads
-            global use_proxies
-            global random_user
-            json_data = open("settings.json")
+            global api_key, password, proxy
+            json_data = open("settings.json", "r")
             json_data = json.load(json_data)
             api_key = json_data["capmonster_key"]
-            print_fails = json_data["print_fails_y_or_n"]
-            print_captcha = json_data["print_captcha_key_y_or_n"]
-            print_taskid = json_data["print_task_id_key_y_or_n"]
-            print_fingerprint = json_data["print_fingerprint_y_or_n"]
-            username = json_data["tokens_username"]
             password = json_data["tokens_password"]
-            print_email = json_data["print_email_y_or_n"]
-            print_proxy = json_data["print_proxy_y_or_n"]
-            threads = json_data["threads"]
-            invite = json_data["invite_code"]
-            random_letters = json_data["random_letters_after_token_username_y_or_n"]
-            use_proxies = json_data["use_proxies_y_or_n"]
-            random_user = json_data["random_username_from_names.txt_y_or_n"]
+            proxy = json_data["rotating_proxy"]
             try:
                 bal = capmonster_python.HCaptchaTask(api_key)
                 el = bal.get_balance()
-            except:
+                if float(el) == 0:
+                    error = True
+                    we()
+                    sys.stdout.write(colorama.Fore.RED + "> ")
+                    print015("More Than 0$ Needed In The Capmonster Key")
+            except Exception as er:
                 error = True
-            if print_fails != "y" and print_fails != "n":       
+                we()
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print015("Could Not Connect To The Capmonster Key")
+
+
+            if len(password) < 8:
+                we()
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print015("Password Must Be At Least 8 Characters Long")
                 error = True
-            if print_captcha != "y" and print_captcha != "n":       
-                error = True    
-            if print_taskid != "y" and print_taskid != "n":       
-                error = True
-            if print_fingerprint != "y" and print_fingerprint != "n":       
-                error = True
-            if print_email != "y" and print_email != "n":       
-                error = True
-            if print_proxy != "y" and print_proxy != "n":       
-                error = True
-            if random_letters != "y" and random_letters != "n":       
-                error = True
-            if use_proxies != "y" and use_proxies != "n":       
-                error = True
-            if "-" in str(threads):
-                error = True
-            if random_user != "y" and random_user != "n":
-                error = True
+            
             try:
-                threads = int(threads)
+                with open("names.txt", "r") as file:
+                    pass
             except:
                 error = True
+                we()
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print015('Missing "names.txt"')
+            
+
+
+            try:
+                requests.get("https://google.com", proxies={"https": proxy, "http": proxy})
+            except:
+                error = True
+                we()
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print015("Could Not Connect To Proxy")
+
+            if proxy == "":
+                error = True
+                we()
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print015("Could Not Connect To Proxy")
+
             if error == True:
-                print(colorama.Fore.RED + "[-] Press Enter When You Have Fixed Settings And All Settings Will Reload")
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print01("Press Enter When You Have Fixed Settings And All Settings Will Reload")
                 input("")
+                print("")
             if error == False:
                 break
         except Exception as e:
-            print(colorama.Fore.RED + 'Missing "settings.json" File, It Stores All Settings')
+            print(str(e))
+            #we()
+            sys.stdout.write(colorama.Fore.RED + "> ")
+            print01('Missing "settings.json" File, It Stores All Settings')
             input("")
             exit()
 
 
-    if str(threads) != "1" and use_proxies == "n":
-            print("Cannot Have More Than 1 Thread Without Proxies, Please Restart The Program And Enter Valid Settings")
-            input("")
-            exit()
 
 
 settings()
-
-
+os.system("cls")
 
 cap = capmonster_python.HCaptchaTask(api_key)
+choicess = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+
+with open("names.txt", "r") as file:
+    names = file.readlines()
 
 
 def gen():
+    global lest
     try:
         while True:
-
             session = requests.session()
-            
-            if use_proxies == "y":
-                time.sleep(0.5)
-                prox = open("rotating_proxy.txt", "r")
-                proxy = str(prox.readline())
-                if print_proxy == "n":
-                    print(colorama.Fore.GREEN + "[+] Loaded Proxy")
-                if print_proxy == "y":
-                    print(colorama.Fore.GREEN + f"[+] Loaded Proxy, {proxy}")
-            
-            while True:
-                try:
-                    tt = cap.create_task("https://discord.com/register", "4c672d35-0701-42b2-88c3-78380b0db560")
-                    if print_taskid == "y":
-                        print(colorama.Fore.GREEN + "[+] Succsesfully Got Task Id, " + str(tt))
-                    if print_taskid == "n":
-                        print(colorama.Fore.GREEN + "[+] Succsesfully Got Task Id")
-                    break
-                except Exception:
-                    if print_fails == "y":
-                        print(colorama.Fore.RED + "[-] Failed To Get Task Id, Retrying")
+            tt = cap.create_task("https://discord.com/register", "4c672d35-0701-42b2-88c3-78380b0db560")
+            lest.append("Created Captcha Task, "+str(tt))
+            captcha = cap.join_task_result(tt)
+            lest.append("Solved Captcha")
+            captcha = str(captcha.get("gRecaptchaResponse"))
+            session.headers["X-Fingerprint"] = session.get("https://discord.com/api/v9/experiments").json()["fingerprint"]
+            Fingerprint = session.headers["X-Fingerprint"]
 
 
-            while True:
-                try:
-                    captcha = cap.join_task_result(tt)
-                    captcha = str(captcha.get("gRecaptchaResponse"))
-                    if print_captcha == "n":
-                        print(colorama.Fore.GREEN + "[+] Succsesfully Got Captcha Key")
-                    if print_captcha == "y":
-                        print(colorama.Fore.GREEN + "[+] Succsesfully Got Captcha Key, " + captcha)
-                    break
-                except:
-                    if print_fails == "y":
-                        print(colorama.Fore.RED + "[-] Failed To Get Captcha Key, Retrying")
+            session.headers = {'Host': 'discord.com', 'Connection': 'keep-alive','sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"','X-Super-Properties': 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzkzLjAuNDU3Ny42MyBTYWZhcmkvNTM3LjM2IEVkZy85My4wLjk2MS40NyIsImJyb3dzZXJfdmVyc2lvbiI6IjkzLjAuNDU3Ny42MyIsIm9zX3ZlcnNpb24iOiIxMCIsInJlZmVycmVyIjoiaHR0cHM6Ly9kaXNjb3JkLmNvbS9jaGFubmVscy81NTQxMjU3Nzc4MTg2MTU4NDQvODcwODgxOTEyMzQyODUxNTk1IiwicmVmZXJyaW5nX2RvbWFpbiI6ImRpc2NvcmQuY29tIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjk3NTA3LCJjbGllbnRfZXZlbnRfc291cmNlIjpudWxsfQ==','Accept-Language': 'en-US', 'sec-ch-ua-mobile': '?0',"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36 Edg/93.0.961.47",'Content-Type': 'application/json', 'Authorization': 'undefined','Accept': '*/*', 'Origin': 'https://discord.com','Sec-Fetch-Site': 'same-origin', 'Sec-Fetch-Mode': 'cors','Sec-Fetch-Dest': 'empty', 'Referer': 'https://discord.com/register','X-Debug-Options': 'bugReporterEnabled','Accept-Encoding': 'gzip, deflate, br','Cookie': 'OptanonConsent=version=6.17.0; locale=th'}
 
-
-
-
-
-            while True:
-                try:
-                    session.headers["X-Fingerprint"] = session.get("https://discord.com/api/v9/experiments").json()["fingerprint"]
-                    Fingerprint = session.headers["X-Fingerprint"]
-                    if print_fingerprint == "y":
-                        print(colorama.Fore.GREEN + "[+] Succsesfully Got Fingerprint, " + Fingerprint)
-                    if print_fingerprint == "n":
-                        print(colorama.Fore.GREEN + "[+] Succsesfully Got Fingerprint")
-                    break
-                except:
-                    if print_fails == "y":
-                        print(colorama.Fore.RED + "[-] Failed To Get Fingerprint, Retrying")
-            session.xsup = 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzkzLjAuNDU3Ny42MyBTYWZhcmkvNTM3LjM2IEVkZy85My4wLjk2MS40NyIsImJyb3dzZXJfdmVyc2lvbiI6IjkzLjAuNDU3Ny42MyIsIm9zX3ZlcnNpb24iOiIxMCIsInJlZmVycmVyIjoiaHR0cHM6Ly9kaXNjb3JkLmNvbS9jaGFubmVscy81NTQxMjU3Nzc4MTg2MTU4NDQvODcwODgxOTEyMzQyODUxNTk1IiwicmVmZXJyaW5nX2RvbWFpbiI6ImRpc2NvcmQuY29tIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjk3NTA3LCJjbGllbnRfZXZlbnRfc291cmNlIjpudWxsfQ=='
-            session.headers = {
-                    'Host': 'discord.com', 'Connection': 'keep-alive',
-                    'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
-                    'X-Super-Properties': session.xsup,
-                    'Accept-Language': 'en-US', 'sec-ch-ua-mobile': '?0',
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36 Edg/93.0.961.47",
-                    'Content-Type': 'application/json', 'Authorization': 'undefined',
-                    'Accept': '*/*', 'Origin': 'https://discord.com',
-                    'Sec-Fetch-Site': 'same-origin', 'Sec-Fetch-Mode': 'cors',
-                    'Sec-Fetch-Dest': 'empty', 'Referer': 'https://discord.com/register',
-                    'X-Debug-Options': 'bugReporterEnabled',
-                    'Accept-Encoding': 'gzip, deflate, br',
-                    'Cookie': 'OptanonConsent=version=6.17.0; locale=th'
-                }
-            choices = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-            if random_user == "n":
-                if random_letters == "y":
-                    rande = random.choices(choices, k=5)
-                    rande = "".join(rande)
-                    rande = str(rande)
-                    rande = " | " + rande
-                if random_letters == "n":
-                    rande = ""
-
-                usa = username + rande
-
-            if random_user == "y":
-                fe = open("names.txt", "r")
-                er = fe.readlines()
-                ee = []
-                for t in er:
-                    if "\n" in t:
-                        ee.append(t[:-1])
-                    else:
-                        ee.append(t)
-                usa = str(random.choice(ee))
-                fe.close()
-            email = random.choices(choices, k=16)
-            email = str("".join(email))
-            if print_email == "y":
-                print(colorama.Fore.GREEN + f"[+] Generated Email, {email}@gmail.com")
-            if print_email == "n":
-                print(colorama.Fore.GREEN + f"[+] Generated Email")
+            email = "".join(random.choices(choicess, k=16))
+            lest.append("Generated Email")
+            if nam == True:
+                name = random.choice(names)
+                if "\n" in name:
+                    name = name[:-1]
+                
+            if nam != True:
+                name = nam + " | " + "".join(random.choices(choicess, k=5))
+            lest.append("Loaded Username")
             payload = {
                 "fingerprint": Fingerprint,
                 "email": f"{email}@gmail.com",
-                "username": f"{usa}",
+                "username": name,
                 "password": password,
-                "invite": invite,
+                "invite": invite_code,
                 "consent": True,
                 "date_of_birth": "2003-11-18",
                 "gift_code_sku_id": None,
@@ -245,12 +182,16 @@ def gen():
                 "promotional_email_opt_in": True
             }
             while True:
-                if use_proxies == "y":
-                    session.proxies = {
-                        "http": proxy,
-                        "https": proxy
-                    }
-                reg = session.post('https://discord.com/api/v9/auth/register', json=payload)
+                session.proxies = {
+                    "http": proxy,
+                    "https": proxy
+                }
+                while True:
+                    try:
+                        reg = session.post('https://discord.com/api/v9/auth/register', json=payload)
+                        break
+                    except:
+                        pass
                 res = str(reg)
                 jle = reg.json()
                 if "201" in res:
@@ -258,63 +199,113 @@ def gen():
                     file = open("tokens.txt", "a")
                     file.write(token+"\n")
                     file.close()
-                    print(colorama.Fore.GREEN + f"[+] Generated Token/Account ({usa}), Saved In tokens.txt And If Invite In settings.json Is Valid Token Shall Auto Join")
+                    token1 = token[:len(token)//2]
+                    for u in range(int(len(token1))):
+                        token1 = str(token1) + "*"
+                    lest.append(f"Generated Token, {token1}")
                     break
-                if "429" in res:
-                    time2 = float(jle["retry_after"])
-                    if print_fails == "y":
-                        print(colorama.Fore.RED + f"[-] Rate Limited, Sleeping For {str(time2)} Seconds")
-                    time.sleep((float(time2)))
-                if "400" in res:
-                    if print_fails == "y":
-                        print(colorama.Fore.RED + "[-] Failed To Create Account")
-                    break
-                if "400" not in res and "429" not in res and "201" not in res:
-                    if print_fails == "y":
-                        print(colorama.Fore.RED + "[-] Unkown Error")
-                    break   
-            if str(threads) == "1":
-                print(colorama.Fore.LIGHTGREEN_EX + "------------------------")
     except Exception as e:
         print(str(e))
-        if print_fails == "y":
-            print(colorama.Fore.RED + "[-] Unkown Error")
+        lest.append("Unkown Error")
+
+
 
 def clear():
     os.system("cls")
 
-try:
-    bal = capmonster_python.HCaptchaTask(api_key)
-    el = bal.get_balance()
-except:
-    print(colorama.Fore.RED + "[-] Capmonster Key Is Invalid")
-    while True:
-        input("")
+lest = []
+
 while True:
-    tools = input("""
-    1. Token Generator/Member Botter/Token Creator
-    2. Check Capmonster Balance
-    3. Reload Settings
-    > """)
+    os.system("cls")
+    sys.stdout.write(colorama.Fore.CYAN + "1. ")
+    print015("Member Booster")
+    sys.stdout.write(colorama.Fore.CYAN + "2. ")
+    print015("Check Capmonster Balance")
+    sys.stdout.write(colorama.Fore.CYAN + "3. ")
+    print015("Reload Settings")
+    sys.stdout.write(colorama.Fore.CYAN + "> ")
+    tools = input("")
+    if tools == "3":
+        os.system("cls")
+        settings()
+        os.system("cls")
+    if tools == "2":
+        clear()
+        try:
+            sys.stdout.write(colorama.Fore.CYAN + "> ")
+            print015("Getting Capmonster Balance...")
+            balance = cap.get_balance()
+            sys.stdout.write(colorama.Fore.CYAN + "> ")
+            print015(f"Capmonster Balance: {str(balance)}$")
+        except:
+            sys.stdout.write(colorama.Fore.RED + "> ")
+            print015("Invalid Capmonster Key, Press Enter To Exit The Program")
+            input("")
+            exit()
+        input("")
+        os.system("cls")
+    
+
+
+
+
+
+
+
+
     if tools == "1":
-        er = 0
+        os.system("cls")
+        while True:
+            try:
+                sys.stdout.write(colorama.Fore.CYAN + "> ")
+                print01("Amount Of Threads: ")
+                threads = int(input(""))
+                break
+            except:
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print015("Enter An Number")
+
+
+        while True:
+            sys.stdout.write(colorama.Fore.CYAN + "> ")
+            print01("Enter Invite Code (discord.gg/*****): ")
+            invite_code = input("")
+            re1 = requests.get(f"https://discord.com/api/v9/invites/{invite_code}?with_counts=true&with_expiration=true")
+            if "200" in str(re1):
+                break
+            sys.stdout.write(colorama.Fore.RED + "> ")
+            print015("Invalid Invite Or Rate Limited")
+
+
+        while True:
+            sys.stdout.write(colorama.Fore.CYAN + "> ")
+            print01('Enter Name Of Accounts, Type "random" To Use Random Names From "names.txt": ')
+            nam = input("")
+            nam = re.sub(r'[^a-zA-Z0-9./]', '', nam)
+            if nam == "random":
+                nam = True
+                break
+            if len(nam) <=2:
+                sys.stdout.write(colorama.Fore.RED + "> ")
+                print("At Least 3 Letters In The Name")
+            else:
+                break
+        sys.stdout.write(colorama.Fore.CYAN + "> ")
+        print01("Press Enter To Start Member Booster: ")
+        input("")
+        os.system("cls")
+        sys.stdout.write(colorama.Fore.CYAN + "> ")
+        print("Generating Accounts...")
+
         for u in range(int(threads)):
             threading.Thread(target=gen).start()
-            er = int(er) + 1
-            print(colorama.Fore.GREEN + f"[+, {str(er)}] Started Thread")
+            sys.stdout.write(colorama.Fore.CYAN + "> ")
+            print("Started Thread")
+
         while True:
-            input("")
-    if tools == "2":
-        print(colorama.Fore.GREEN + "[+] Getting Balance, Be Patient")
-        try:
-            bal = capmonster_python.HCaptchaTask(api_key)
-            print(colorama.Fore.GREEN + "[+] Balance: " + str(bal.get_balance()) + "$")
-        except:
-            print(colorama.Fore.RED + "[-] Capmonster Key Is Invalid")
-        input("    > ")
-        clear()
-    if tools == "3":
-        settings()
-        print(colorama.Fore.GREEN + "[+] Reloaded Settings")
-        input("    > ")
-        clear()
+            for u in lest:
+                lest.remove(u)
+                sys.stdout.write(colorama.Fore.CYAN + "> ")
+                print(u)
+        
+
